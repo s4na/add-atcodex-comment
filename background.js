@@ -1,5 +1,5 @@
 chrome.action.onClicked.addListener(async (tab) => {
-  if (!tab.id || !tab.url?.match(/^https:\/\/github\.com\/[^/]+\/[^/]+\/pull\/\d+(?:[/?#]|$)/)) {
+  if (!tab.id || !tab.url?.match(/^https:\/\/github\.com\/[^/]+\/[^/]+\/pull\/\d+\/?(?:[?#].*)?$/)) {
     return;
   }
 

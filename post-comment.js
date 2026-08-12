@@ -14,9 +14,11 @@
   }
 
   const form = textarea.closest("form");
-  const submitButton = [...(form?.querySelectorAll('button[type="submit"]') ?? [])].find(
-    (button) => button.offsetParent !== null,
-  );
+  const submitButton = [
+    ...(form?.querySelectorAll(
+      'button[type="submit"]:not([name="comment_and_close"]):not([name="comment_and_reopen"])',
+    ) ?? []),
+  ].find((button) => button.offsetParent !== null);
 
   if (!submitButton) {
     alert("コメント投稿ボタンが見つかりませんでした。");
