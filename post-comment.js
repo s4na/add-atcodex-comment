@@ -1,0 +1,42 @@
+(() => {
+  const textarea = [...document.querySelectorAll("textarea")].find(
+    (element) => element.placeholder === "Leave a comment" && element.offsetParent !== null,
+  );
+
+  if (!textarea) {
+    alert("GitHubのPRのConversation画面で実行してください。");
+    return;
+  }
+
+  const form = textarea.closest("form");
+  const submitButton = [...(form?.querySelectorAll('button[type="submit"]') ?? [])].find(
+    (button) => button.textContent.trim() === "Comment",
+  );
+
+  if (!submitButton) {
+    alert("コメント投稿ボタンが見つかりませんでした。");
+    return;
+  }
+
+  const valueSetter = Object.getOwnPropertyDescriptor(
+    HTMLTextAreaElement.prototype,
+    "value",
+  ).set;
+  valueSetter.call(textarea, "@codex");
+  textarea.dispatchEvent(new Event("input", { bubbles: true }));
+
+  const deadline = Date.now() + 3000;
+  const postWhenReady = () => {
+    if (!submitButton.disabled) {
+      submitButton.click();
+      return;
+    }
+    if (Date.now() >= deadline) {
+      alert("コメントを投稿できませんでした。");
+      return;
+    }
+    requestAnimationFrame(postWhenReady);
+  };
+
+  postWhenReady();
+})();

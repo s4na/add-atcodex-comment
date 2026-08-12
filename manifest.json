@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Add @codex comment",
+  "version": "1.0.0",
+  "description": "Post @codex as a GitHub pull request comment with one click.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_title": "Post @codex"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
