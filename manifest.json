@@ -5,7 +5,7 @@
   "description": "Post @codex as a GitHub pull request comment with one click.",
   "content_scripts": [
     {
-      "matches": ["https://github.com/*/*/pull/*"],
+      "matches": ["https://github.com/*"],
       "js": ["post-comment.js"],
       "css": ["post-comment.css"]
     }
