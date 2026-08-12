@@ -1,4 +1,10 @@
 (() => {
+  const buttonId = "add-atcodex-comment-button";
+
+  const isConversationPage = () =>
+    /^\/[^/]+\/[^/]+\/pull\/\d+\/?$/.test(location.pathname);
+
+  const postComment = () => {
   const form = [...document.querySelectorAll("form")].find((element) => {
     const action = new URL(element.action, location.href);
     return /^\/[^/]+\/[^/]+\/issues\/\d+\/comments$/.test(action.pathname);
@@ -49,4 +55,23 @@
   };
 
   postWhenReady();
+  };
+
+  const renderButton = () => {
+    document.getElementById(buttonId)?.remove();
+
+    if (!isConversationPage()) {
+      return;
+    }
+
+    const button = document.createElement("button");
+    button.id = buttonId;
+    button.type = "button";
+    button.textContent = "@codex";
+    button.addEventListener("click", postComment);
+    document.body.append(button);
+  };
+
+  renderButton();
+  document.addEventListener("turbo:load", renderButton);
 })();

@@ -1,6 +1,6 @@
 # Add @codex comment
 
-GitHubのPull Requestに、拡張機能のアイコンを1回押すだけで `@codex` とコメントするChrome拡張です。
+GitHubのPull Requestに、画面右下のボタンを1回押すだけで `@codex` とコメントするChrome拡張です。
 
 ## インストール
 
@@ -12,11 +12,8 @@ GitHubのPull Requestに、拡張機能のアイコンを1回押すだけで `@c
 ## 使い方
 
 1. GitHubのPull Requestで「Conversation」タブを開く
-2. ツールバーの拡張機能アイコンを押す
+2. 画面右下に固定表示される `@codex` ボタンを押す
 
 `@codex` だけがPRコメントとして投稿されます。GitHubへの追加の認証やトークン設定は不要です。
 
-## 権限
-
-- `activeTab`: アイコンを押したGitHubのタブだけを操作するため
-- `scripting`: そのタブのコメント欄へ `@codex` を投稿するため
+入力中のコメントがある場合は、上書きせず投稿を中止します。
