@@ -8,6 +8,11 @@
     return;
   }
 
+  if (textarea.value.trim()) {
+    alert("入力中のコメントがあるため投稿しませんでした。");
+    return;
+  }
+
   const form = textarea.closest("form");
   const submitButton = [...(form?.querySelectorAll('button[type="submit"]') ?? [])].find(
     (button) => button.textContent.trim() === "Comment",
