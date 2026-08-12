@@ -1,5 +1,28 @@
 (() => {
+  const actionContainerId = "s4na-github-floating-actions";
+  const actionAttribute = "data-s4na-floating-action";
+  const applicationName = "add-atcodex-comment";
   const buttonId = "add-atcodex-comment-button";
+
+  const registerFloatingAction = (button) => {
+    let container = document.getElementById(actionContainerId);
+    if (!container) {
+      container = document.createElement("div");
+      container.id = actionContainerId;
+      document.body.append(container);
+    }
+
+    button.setAttribute(actionAttribute, applicationName);
+    container.append(button);
+
+    [...container.querySelectorAll(`[${actionAttribute}]`)]
+      .sort((left, right) =>
+        left
+          .getAttribute(actionAttribute)
+          .localeCompare(right.getAttribute(actionAttribute), "en"),
+      )
+      .forEach((action) => container.append(action));
+  };
 
   const isConversationPage = () =>
     /^\/[^/]+\/[^/]+\/pull\/\d+\/?$/.test(location.pathname);
@@ -69,7 +92,7 @@
     button.type = "button";
     button.textContent = "@codex";
     button.addEventListener("click", postComment);
-    document.body.append(button);
+    registerFloatingAction(button);
   };
 
   renderButton();
