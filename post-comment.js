@@ -1,5 +1,9 @@
 (() => {
-  const textarea = [...document.querySelectorAll('textarea[name="comment[body]"]')].find(
+  const form = [...document.querySelectorAll("form")].find((element) => {
+    const action = new URL(element.action, location.href);
+    return /^\/[^/]+\/[^/]+\/issues\/\d+\/comments$/.test(action.pathname);
+  });
+  const textarea = [...(form?.querySelectorAll('textarea[name="comment[body]"]') ?? [])].find(
     (element) => element.offsetParent !== null,
   );
 
@@ -13,7 +17,6 @@
     return;
   }
 
-  const form = textarea.closest("form");
   const submitButton = [
     ...(form?.querySelectorAll(
       'button[type="submit"]:not([name="comment_and_close"]):not([name="comment_and_reopen"])',
