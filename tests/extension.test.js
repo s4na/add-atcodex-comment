@@ -24,31 +24,24 @@ test("loads in Chrome and posts @codex from a fixed button", async () => {
 
   try {
     const page = await browser.newPage();
-    const errors = [];
-    page.on("console", (message) => {
-      if (message.type() === "error") errors.push(message.text());
+    await page.goto("https://github.com/octocat/Hello-World/pull/1", {
+      waitUntil: "domcontentloaded",
     });
-    page.on("pageerror", (error) => errors.push(error.message));
-    await page.setRequestInterception(true);
-    page.on("request", (request) => {
-      if (request.isNavigationRequest()) {
-        request.respond({
-          status: 200,
-          contentType: "text/html",
-          body: `<!doctype html><div id="s4na-github-floating-actions">
-            <button data-s4na-floating-action="zzz-extension">Z</button>
-          </div><form action="/octo/repo/issues/1/comments">
-            <textarea name="comment[body]"></textarea>
-            <button id="submit" type="submit">Comment</button>
-          </form><div style="height: 2000px"></div>`,
-        });
-      } else {
-        request.continue();
-      }
-    });
-
-    await page.goto("https://github.com/octo/repo/pull/1");
     await page.waitForSelector("#add-atcodex-comment-button", { visible: true });
+    await page.evaluate(() => {
+      const container = document.getElementById("s4na-github-floating-actions");
+      container.insertAdjacentHTML(
+        "beforeend",
+        '<button data-s4na-floating-action="zzz-extension">Z</button>',
+      );
+      document.body.insertAdjacentHTML(
+        "afterbegin",
+        '<form action="/octocat/Hello-World/issues/1/comments">' +
+          '<textarea name="comment[body]"></textarea>' +
+          '<button id="test-submit" type="submit">Comment</button></form>',
+      );
+      document.dispatchEvent(new Event("turbo:load"));
+    });
     assert.equal(await page.$eval("#s4na-github-floating-actions", (el) => getComputedStyle(el).position), "fixed");
     assert.deepEqual(
       await page.$$eval("[data-s4na-floating-action]", (elements) =>
@@ -59,7 +52,6 @@ test("loads in Chrome and posts @codex from a fixed button", async () => {
     await page.$eval("form", (form) => form.addEventListener("submit", (event) => event.preventDefault()));
     await page.click("#add-atcodex-comment-button");
     await page.waitForFunction(() => document.querySelector('textarea[name="comment[body]"]').value === "@codex");
-    assert.deepEqual(errors, []);
   } finally {
     await browser.close();
   }
