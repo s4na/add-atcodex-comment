@@ -1,0 +1,23 @@
+#add-atcodex-comment-button {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  padding: 10px 16px;
+  border: 1px solid rgba(27, 31, 36, 0.15);
+  border-radius: 6px;
+  color: #ffffff;
+  background: #1f883d;
+  box-shadow: 0 3px 12px rgba(27, 31, 36, 0.2);
+  font: 600 14px/20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  cursor: pointer;
+}
+
+#add-atcodex-comment-button:hover {
+  background: #1a7f37;
+}
+
+#add-atcodex-comment-button:focus-visible {
+  outline: 2px solid #0969da;
+  outline-offset: 2px;
+}

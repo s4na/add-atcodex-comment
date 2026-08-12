@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Add @codex comment",
+  "version": "1.0.0",
+  "description": "Post @codex as a GitHub pull request comment with one click.",
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["post-comment.js"],
+      "css": ["post-comment.css"]
+    }
+  ]
+}
