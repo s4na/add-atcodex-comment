@@ -1,6 +1,6 @@
 (() => {
-  const textarea = [...document.querySelectorAll("textarea")].find(
-    (element) => element.placeholder === "Leave a comment" && element.offsetParent !== null,
+  const textarea = [...document.querySelectorAll('textarea[name="comment[body]"]')].find(
+    (element) => element.offsetParent !== null,
   );
 
   if (!textarea) {
@@ -15,7 +15,7 @@
 
   const form = textarea.closest("form");
   const submitButton = [...(form?.querySelectorAll('button[type="submit"]') ?? [])].find(
-    (button) => button.textContent.trim() === "Comment",
+    (button) => button.offsetParent !== null,
   );
 
   if (!submitButton) {
