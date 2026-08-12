@@ -49,9 +49,16 @@ test("loads in Chrome and posts @codex from a fixed button", async () => {
       ),
       ["aaa-extension", "add-atcodex-comment"],
     );
-    await page.$eval("form", (form) => form.addEventListener("submit", (event) => event.preventDefault()));
+    await page.$eval("form", (form) => {
+      window.__testFormSubmitted = false;
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        window.__testFormSubmitted = true;
+      });
+    });
     await page.click("#add-atcodex-comment-button");
     await page.waitForFunction(() => document.querySelector('textarea[name="comment[body]"]').value === "@codex");
+    await page.waitForFunction(() => window.__testFormSubmitted);
   } finally {
     await browser.close();
   }
