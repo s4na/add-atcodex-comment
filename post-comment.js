@@ -27,17 +27,26 @@
   const isConversationPage = () =>
     /^\/[^/]+\/[^/]+\/pull\/\d+\/?$/.test(location.pathname);
 
-  const postComment = () => {
-  const form = [...document.querySelectorAll("form")].find((element) => {
-    const action = new URL(element.action, location.href);
+  const isVisible = (element) => {
+    const style = element.ownerDocument.defaultView.getComputedStyle(element);
     return (
-      /^\/[^/]+\/[^/]+\/pull\/\d+\/comment$/.test(action.pathname) ||
-      /^\/[^/]+\/[^/]+\/issues\/\d+\/comments$/.test(action.pathname)
+      element.getClientRects().length > 0 &&
+      style.visibility !== "hidden" &&
+      style.visibility !== "collapse"
     );
-  });
-  const textarea = [...(form?.querySelectorAll('textarea[name="comment[body]"]') ?? [])].find(
-    (element) => element.offsetParent !== null,
-  );
+  };
+
+  const postComment = () => {
+  const formAndTextarea = [...document.querySelectorAll("form")].map((form) => {
+    const textarea = [...form.querySelectorAll('textarea[name="comment[body]"]')].find(isVisible);
+    const action = new URL(form.action, location.href);
+    const isCommentForm =
+      /^\/[^/]+\/[^/]+\/pull\/\d+\/comment$/.test(action.pathname) ||
+      /^\/[^/]+\/[^/]+\/issues\/\d+\/comments$/.test(action.pathname);
+    return isCommentForm && textarea ? { form, textarea } : null;
+  }).find(Boolean);
+  const form = formAndTextarea?.form;
+  const textarea = formAndTextarea?.textarea;
 
   if (!textarea) {
     alert("GitHubのPRのConversation画面で実行してください。");
@@ -53,7 +62,7 @@
     ...(form?.querySelectorAll(
       'button[type="submit"]:not([name="comment_and_close"]):not([name="comment_and_reopen"])',
     ) ?? []),
-  ].find((button) => button.offsetParent !== null);
+  ].find(isVisible);
 
   if (!submitButton) {
     alert("コメント投稿ボタンが見つかりませんでした。");
