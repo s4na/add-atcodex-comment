@@ -14,7 +14,11 @@ test("manifest resources exist", () => {
   }
 });
 
-test("loads in Chrome and posts @codex from a fixed button", async () => {
+for (const [formName, formAction] of [
+  ["current PR form", "/octocat/Hello-World/pull/1/comment?sticky=true"],
+  ["legacy issue comment form", "/octocat/Hello-World/issues/1/comments"],
+]) {
+  test(`loads in Chrome and posts @codex from a fixed button on the ${formName}`, async () => {
   const browser = await puppeteer.launch({
     headless: "new",
     pipe: true,
@@ -28,7 +32,7 @@ test("loads in Chrome and posts @codex from a fixed button", async () => {
       waitUntil: "domcontentloaded",
     });
     await page.waitForSelector("#add-atcodex-comment-button", { visible: true });
-    await page.evaluate(() => {
+    await page.evaluate((action) => {
       const container = document.getElementById("s4na-github-floating-actions");
       container.insertAdjacentHTML(
         "beforeend",
@@ -36,12 +40,12 @@ test("loads in Chrome and posts @codex from a fixed button", async () => {
       );
       document.body.insertAdjacentHTML(
         "afterbegin",
-        '<form action="/octocat/Hello-World/issues/1/comments">' +
+        `<form action="${action}">` +
           '<textarea name="comment[body]"></textarea>' +
           '<button id="test-submit" type="submit">Comment</button></form>',
       );
       document.dispatchEvent(new Event("turbo:load"));
-    });
+    }, formAction);
     assert.equal(await page.$eval("#s4na-github-floating-actions", (el) => getComputedStyle(el).position), "fixed");
     assert.deepEqual(
       await page.$$eval("[data-s4na-floating-action]", (elements) =>
@@ -62,4 +66,5 @@ test("loads in Chrome and posts @codex from a fixed button", async () => {
   } finally {
     await browser.close();
   }
-});
+  });
+}

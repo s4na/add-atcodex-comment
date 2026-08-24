@@ -30,7 +30,10 @@
   const postComment = () => {
   const form = [...document.querySelectorAll("form")].find((element) => {
     const action = new URL(element.action, location.href);
-    return /^\/[^/]+\/[^/]+\/issues\/\d+\/comments$/.test(action.pathname);
+    return (
+      /^\/[^/]+\/[^/]+\/pull\/\d+\/comment$/.test(action.pathname) ||
+      /^\/[^/]+\/[^/]+\/issues\/\d+\/comments$/.test(action.pathname)
+    );
   });
   const textarea = [...(form?.querySelectorAll('textarea[name="comment[body]"]') ?? [])].find(
     (element) => element.offsetParent !== null,
