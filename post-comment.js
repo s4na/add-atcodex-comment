@@ -69,12 +69,12 @@
     return;
   }
 
-  const valueSetter = Object.getOwnPropertyDescriptor(
-    HTMLTextAreaElement.prototype,
-    "value",
-  ).set;
-  valueSetter.call(textarea, "@codex");
-  textarea.dispatchEvent(new Event("input", { bubbles: true }));
+  textarea.focus();
+  textarea.setSelectionRange(0, textarea.value.length);
+  if (!document.execCommand("insertText", false, "@codex")) {
+    alert("コメント欄に入力できませんでした。");
+    return;
+  }
 
   const deadline = Date.now() + 3000;
   const postWhenReady = () => {

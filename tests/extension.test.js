@@ -44,11 +44,14 @@ for (const [formName, formAction] of [
           '<textarea id="hidden-comment" name="comment[body]"></textarea>' +
           '<button type="submit">Comment</button></form>' +
           `<form id="visible-comment-form" action="${action}">` +
-          '<textarea id="visible-comment" name="comment[body]" style="position: fixed"></textarea>' +
+          '<textarea id="visible-comment" name="comment[body]" style="position: fixed"> \n</textarea>' +
           '<button id="test-submit" type="submit" style="position: fixed" disabled>Comment</button></form>',
       );
-      document.getElementById("visible-comment").addEventListener("input", () => {
-        document.getElementById("test-submit").disabled = false;
+      document.getElementById("visible-comment").addEventListener("input", (event) => {
+        window.__inputWasTrusted = event.isTrusted;
+        if (event.isTrusted) {
+          document.getElementById("test-submit").disabled = false;
+        }
       });
       document.dispatchEvent(new Event("turbo:load"));
     }, formAction);
@@ -68,6 +71,7 @@ for (const [formName, formAction] of [
     });
     await page.click("#add-atcodex-comment-button");
     await page.waitForFunction(() => document.getElementById("visible-comment").value === "@codex");
+    assert.equal(await page.evaluate(() => window.__inputWasTrusted), true);
     assert.equal(await page.$eval("#hidden-comment", (textarea) => textarea.value), "");
     await page.waitForFunction(() => window.__testFormSubmitted);
   } finally {
