@@ -59,9 +59,9 @@
   }
 
   const submitButton = [
-    ...(form?.querySelectorAll(
+    ...form.querySelectorAll(
       'button[type="submit"]:not([name="comment_and_close"]):not([name="comment_and_reopen"])',
-    ) ?? []),
+    ),
   ].find(isVisible);
 
   if (!submitButton) {
@@ -76,20 +76,7 @@
     return;
   }
 
-  const deadline = Date.now() + 3000;
-  const postWhenReady = () => {
-    if (!submitButton.disabled) {
-      submitButton.click();
-      return;
-    }
-    if (Date.now() >= deadline) {
-      alert("コメントを投稿できませんでした。");
-      return;
-    }
-    requestAnimationFrame(postWhenReady);
-  };
-
-  postWhenReady();
+  form.requestSubmit(submitButton);
   };
 
   const renderButton = () => {
