@@ -40,10 +40,16 @@ for (const [formName, formAction] of [
       );
       document.body.insertAdjacentHTML(
         "afterbegin",
-        `<form action="${action}">` +
-          '<textarea name="comment[body]"></textarea>' +
-          '<button id="test-submit" type="submit">Comment</button></form>',
+        `<form action="${action}" style="visibility: hidden">` +
+          '<textarea id="hidden-comment" name="comment[body]"></textarea>' +
+          '<button type="submit">Comment</button></form>' +
+          `<form id="visible-comment-form" action="${action}">` +
+          '<textarea id="visible-comment" name="comment[body]" style="position: fixed"></textarea>' +
+          '<button id="test-submit" type="submit" style="position: fixed" disabled>Comment</button></form>',
       );
+      document.getElementById("visible-comment").addEventListener("input", () => {
+        document.getElementById("test-submit").disabled = false;
+      });
       document.dispatchEvent(new Event("turbo:load"));
     }, formAction);
     assert.equal(await page.$eval("#s4na-github-floating-actions", (el) => getComputedStyle(el).position), "fixed");
@@ -53,7 +59,7 @@ for (const [formName, formAction] of [
       ),
       ["aaa-extension", "add-atcodex-comment"],
     );
-    await page.$eval("form", (form) => {
+    await page.$eval("#visible-comment-form", (form) => {
       window.__testFormSubmitted = false;
       form.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -61,7 +67,8 @@ for (const [formName, formAction] of [
       });
     });
     await page.click("#add-atcodex-comment-button");
-    await page.waitForFunction(() => document.querySelector('textarea[name="comment[body]"]').value === "@codex");
+    await page.waitForFunction(() => document.getElementById("visible-comment").value === "@codex");
+    assert.equal(await page.$eval("#hidden-comment", (textarea) => textarea.value), "");
     await page.waitForFunction(() => window.__testFormSubmitted);
   } finally {
     await browser.close();
